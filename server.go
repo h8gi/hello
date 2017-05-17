@@ -1,8 +1,10 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
+
+	"./controllers"
+	"./models"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
@@ -12,43 +14,36 @@ import (
 )
 
 func main() {
-	_, err := gorm.Open("postgres", "host=localhost user=yagi dbname=gomi sslmode=disable password=mypassword")
+	db, err := gorm.Open("postgres", "host=localhost user=yagihiroki dbname=gomi sslmode=disable password=mypassword")
 	if err != nil {
-		fmt.Print(err.Error())
+		panic("failed to connect database")
+	}
+	defer db.Close()
+
+	// Migrate the schema
+	db.AutoMigrate(&models.User{})
+	// controller
+	cntrl := controllers.Controller{
+		DB: db,
 	}
 
 	e := echo.New()
+	// Middleware
 	e.Use(middleware.RemoveTrailingSlashWithConfig(middleware.TrailingSlashConfig{
 		RedirectCode: http.StatusMovedPermanently,
 	}))
+	e.Use(middleware.Logger())
+	e.Use(middleware.Recover())
 
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Hello, World!")
 	})
 
-	e.POST("/users", saveUser)
-	e.GET("/users/:id", getUser)
-	e.PUT("/users/:id", updateUser)
-	e.DELETE("/users/:id", deleteUser)
+	e.POST("/users", cntrl.CreateUser)
+	e.GET("/users/:id", cntrl.GetUser)
+	e.PUT("/users/:id", cntrl.UpdateUser)
+	e.DELETE("/users/:id", cntrl.DeleteUser)
 
 	e.Logger.Fatal(e.Start(":1323"))
-}
 
-func saveUser(c echo.Context) error {
-	return c.String(http.StatusOK, "save user")
-}
-
-func getUser(c echo.Context) error {
-	id := c.Param("id")
-	return c.String(http.StatusOK, fmt.Sprintf("get: %s", id))
-}
-
-func updateUser(c echo.Context) error {
-	id := c.Param("id")
-	return c.String(http.StatusOK, fmt.Sprintf("put: %s", id))
-}
-
-func deleteUser(c echo.Context) error {
-	id := c.Param("id")
-	return c.String(http.StatusOK, fmt.Sprintf("delete: %s", id))
 }
