@@ -16,6 +16,7 @@ type Controller struct {
 func (cn *Controller) CreateUser(c echo.Context) (err error) {
 	user := new(models.User)
 	if err = c.Bind(user); err != nil {
+		c.String(http.StatusBadRequest, "create failed")
 		return
 	}
 	cn.DB.Create(&user)
