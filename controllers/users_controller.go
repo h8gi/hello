@@ -9,11 +9,18 @@ import (
 	"github.com/labstack/echo"
 )
 
-type UserController struct {
+type UsersController struct {
 	DB *gorm.DB
 }
 
-func (uc *UserController) Create(c echo.Context) (err error) {
+func (uc *UsersController) List(c echo.Context) (err error) {
+	users := make([]models.User, 10)
+	uc.DB.Find(&users)
+	c.String(http.StatusOK, fmt.Sprintf("%s", users))
+	return
+}
+
+func (uc *UsersController) Create(c echo.Context) (err error) {
 	user := new(models.User)
 	if err = c.Bind(user); err != nil {
 		c.String(http.StatusBadRequest, "create failed")
@@ -26,16 +33,16 @@ func (uc *UserController) Create(c echo.Context) (err error) {
 	return c.String(http.StatusCreated, "user created")
 }
 
-func (uc *UserController) Get(c echo.Context) error {
+func (uc *UsersController) Get(c echo.Context) error {
 	user := new(models.User)
 	name := c.Param("name")
 	if uc.DB.First(&user, "name = ?", name).RecordNotFound() {
 		return c.String(http.StatusNotFound, fmt.Sprintf("get: %s", name))
 	}
-	return c.String(http.StatusOK, fmt.Sprintf("get %s", name))
+	return c.String(http.StatusOK, fmt.Sprintf("%s!", user))
 }
 
-func (uc *UserController) Update(c echo.Context) (err error) {
+func (uc *UsersController) Update(c echo.Context) (err error) {
 	user := new(models.User)
 	name := c.Param("name")
 	if uc.DB.First(&user, "name = ?", name).RecordNotFound() {
@@ -53,7 +60,7 @@ func (uc *UserController) Update(c echo.Context) (err error) {
 	return c.String(http.StatusOK, fmt.Sprintf("put: %s", name))
 }
 
-func (uc *UserController) Delete(c echo.Context) (err error) {
+func (uc *UsersController) Delete(c echo.Context) (err error) {
 	user := new(models.User)
 	name := c.Param("name")
 	if uc.DB.First(&user, "name = ?", name).RecordNotFound() {

@@ -14,7 +14,7 @@ import (
 )
 
 func main() {
-	db, err := gorm.Open("postgres", "host=localhost user=yagihiroki dbname=gomi sslmode=disable password=mypassword")
+	db, err := gorm.Open("postgres", "host=localhost user=yagi dbname=gomi sslmode=disable password=mypassword")
 	if err != nil {
 		panic("failed to connect database")
 	}
@@ -23,7 +23,7 @@ func main() {
 	// Migrate the schema
 	db.AutoMigrate(&models.User{})
 	// controller
-	user := controllers.UserController{
+	usersController := controllers.UsersController{
 		DB: db,
 	}
 
@@ -39,11 +39,12 @@ func main() {
 		return c.String(http.StatusOK, "Hello, World!")
 	})
 
-	e.POST("/user", user.Create)
-	e.GET("/user/:name", user.Get)
-	e.PUT("/user/:name", user.Update)
-	e.DELETE("/user/:name", user.Delete)
+	e.GET("/user", usersController.List)
+	e.POST("/user", usersController.Create)
+
+	e.GET("/user/:name", usersController.Get)
+	e.PUT("/user/:name", usersController.Update)
+	e.DELETE("/user/:name", usersController.Delete)
 
 	e.Logger.Fatal(e.Start(":1323"))
-
 }
