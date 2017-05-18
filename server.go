@@ -14,7 +14,7 @@ import (
 )
 
 func main() {
-	db, err := gorm.Open("postgres", "host=localhost user=yagi dbname=gomi sslmode=disable password=mypassword")
+	db, err := gorm.Open("postgres", "host=localhost user=yagihiroki dbname=gomi sslmode=disable password=mypassword")
 	if err != nil {
 		panic("failed to connect database")
 	}
@@ -39,10 +39,10 @@ func main() {
 		return c.String(http.StatusOK, "Hello, World!")
 	})
 
-	e.POST("/api/users", cntrl.CreateUser)
-	e.GET("/api/users/:id", cntrl.GetUser)
-	e.PUT("/api/users/:id", cntrl.UpdateUser)
-	e.DELETE("/api/users/:id", cntrl.DeleteUser)
+	e.POST("/user", cntrl.CreateUser)
+	e.GET("/user/:id", cntrl.GetUser)
+	e.PUT("/user/:id", cntrl.UpdateUser)
+	e.DELETE("/user/:id", cntrl.DeleteUser)
 
 	e.Logger.Fatal(e.Start(":1323"))
 
