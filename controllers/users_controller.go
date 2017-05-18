@@ -9,36 +9,59 @@ import (
 	"github.com/labstack/echo"
 )
 
-type Controller struct {
+type UserController struct {
 	DB *gorm.DB
 }
 
-func (cntl *Controller) CreateUser(c echo.Context) (err error) {
+func (uc *UserController) Create(c echo.Context) (err error) {
 	user := new(models.User)
 	if err = c.Bind(user); err != nil {
 		c.String(http.StatusBadRequest, "create failed")
 		return
 	}
-	cntl.DB.Create(&user)
+	if err = uc.DB.Create(&user).Error; err != nil {
+		c.String(http.StatusBadRequest, "create failed")
+		return
+	}
 	return c.String(http.StatusCreated, "user created")
 }
 
-func (cntl *Controller) GetUser(c echo.Context) error {
-	var user models.User
-	id := c.Param("id")
-	cntl.DB.First(&user, "id = ?", id)
-	if user.ID != 0 {
-		return c.String(http.StatusOK, fmt.Sprintf("get %s", id))
+func (uc *UserController) Get(c echo.Context) error {
+	user := new(models.User)
+	name := c.Param("name")
+	if uc.DB.First(&user, "name = ?", name).RecordNotFound() {
+		return c.String(http.StatusNotFound, fmt.Sprintf("get: %s", name))
 	}
-	return c.String(http.StatusNotFound, fmt.Sprintf("get: %s", id))
+	return c.String(http.StatusOK, fmt.Sprintf("get %s", name))
 }
 
-func (cntl *Controller) UpdateUser(c echo.Context) error {
-	id := c.Param("id")
-	return c.String(http.StatusOK, fmt.Sprintf("put: %s", id))
+func (uc *UserController) Update(c echo.Context) (err error) {
+	user := new(models.User)
+	name := c.Param("name")
+	if uc.DB.First(&user, "name = ?", name).RecordNotFound() {
+		return c.String(http.StatusNotFound, fmt.Sprintf("not found"))
+	}
+	if err = c.Bind(user); err != nil {
+		c.String(http.StatusBadRequest, "bad params")
+		return err
+	}
+	if err = uc.DB.Save(&user).Error; err != nil {
+		c.String(http.StatusBadRequest, "bad params")
+		return err
+	}
+
+	return c.String(http.StatusOK, fmt.Sprintf("put: %s", name))
 }
 
-func (cntl *Controller) DeleteUser(c echo.Context) error {
-	id := c.Param("id")
-	return c.String(http.StatusOK, fmt.Sprintf("delete: %s", id))
+func (uc *UserController) Delete(c echo.Context) (err error) {
+	user := new(models.User)
+	name := c.Param("name")
+	if uc.DB.First(&user, "name = ?", name).RecordNotFound() {
+		return c.String(http.StatusNotFound, "not found")
+	}
+	if err = uc.DB.Delete(user).Error; err != nil {
+		c.String(http.StatusInternalServerError, "???")
+		return err
+	}
+	return c.String(http.StatusOK, fmt.Sprintf("delete: %s", name))
 }

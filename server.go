@@ -23,7 +23,7 @@ func main() {
 	// Migrate the schema
 	db.AutoMigrate(&models.User{})
 	// controller
-	cntrl := controllers.Controller{
+	user := controllers.UserController{
 		DB: db,
 	}
 
@@ -39,10 +39,10 @@ func main() {
 		return c.String(http.StatusOK, "Hello, World!")
 	})
 
-	e.POST("/user", cntrl.CreateUser)
-	e.GET("/user/:id", cntrl.GetUser)
-	e.PUT("/user/:id", cntrl.UpdateUser)
-	e.DELETE("/user/:id", cntrl.DeleteUser)
+	e.POST("/user", user.Create)
+	e.GET("/user/:name", user.Get)
+	e.PUT("/user/:name", user.Update)
+	e.DELETE("/user/:name", user.Delete)
 
 	e.Logger.Fatal(e.Start(":1323"))
 
