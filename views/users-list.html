@@ -1,0 +1,25 @@
+{{define "users-list"}}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8"/>    
+    <title>Document</title>
+  </head>
+  <body>
+    <header>
+      <ul>
+        {{range .}}
+        <li>
+          <dl>
+            <dt>Name</dt>
+            <dd>{{.Name}}</dd>
+            <dt>Email</dt>
+            <dd>{{.Email}}</dd>
+          </dl>         
+        </li>
+        {{end}}
+      </ul>
+    </header>
+  </body>
+</html>
+{{end}}

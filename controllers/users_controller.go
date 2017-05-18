@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"../models"
+	"github.com/h8gi/hello/models"
 	"github.com/jinzhu/gorm"
 	"github.com/labstack/echo"
 )
@@ -16,8 +16,7 @@ type UsersController struct {
 func (uc *UsersController) List(c echo.Context) (err error) {
 	users := make([]models.User, 10)
 	uc.DB.Find(&users)
-	c.String(http.StatusOK, fmt.Sprintf("%s", users))
-	return
+	return c.Render(http.StatusOK, "users-list", users)
 }
 
 func (uc *UsersController) Create(c echo.Context) (err error) {
@@ -71,4 +70,9 @@ func (uc *UsersController) Delete(c echo.Context) (err error) {
 		return err
 	}
 	return c.String(http.StatusOK, fmt.Sprintf("delete: %s", name))
+}
+
+func (uc *UsersController) Login(c echo.Context) error {
+	name := c.FormValue("name")
+	password := c.FormValue("password")
 }
