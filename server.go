@@ -39,10 +39,10 @@ func main() {
 		return c.String(http.StatusOK, "Hello, World!")
 	})
 
-	e.POST("/users", cntrl.CreateUser)
-	e.GET("/users/:id", cntrl.GetUser)
-	e.PUT("/users/:id", cntrl.UpdateUser)
-	e.DELETE("/users/:id", cntrl.DeleteUser)
+	e.POST("/api/users", cntrl.CreateUser)
+	e.GET("/api/users/:id", cntrl.GetUser)
+	e.PUT("/api/users/:id", cntrl.UpdateUser)
+	e.DELETE("/api/users/:id", cntrl.DeleteUser)
 
 	e.Logger.Fatal(e.Start(":1323"))
 
