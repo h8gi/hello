@@ -7,7 +7,6 @@ import (
 
 	"./models"
 
-	session "github.com/h8gi/echo-session"
 	"github.com/h8gi/hello/controllers"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
@@ -52,11 +51,6 @@ func main() {
 	}))
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
-	// session
-	store := session.NewCookieStore([]byte("hellothisissecretkey"))
-	// expiry time
-	store.MaxAge(86400)
-	e.Use(session.Sessions("HELLOSESSION", store))
 
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Hello, World!")

@@ -75,4 +75,11 @@ func (uc *UsersController) Delete(c echo.Context) (err error) {
 func (uc *UsersController) Login(c echo.Context) error {
 	name := c.FormValue("name")
 	password := c.FormValue("password")
+	user := new(models.User)
+	if uc.DB.First(&user, "name = ?", name).RecordNotFound() {
+		return echo.ErrUnauthorized
+	}
+	if user.Password == password {
+		//
+	}
 }
