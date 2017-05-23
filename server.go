@@ -31,6 +31,9 @@ func main() {
 	defer db.Close()
 	// Migrate the schema
 	db.AutoMigrate(&models.User{})
+	cntrl := controllers.Controller{
+		DB: db,
+	}
 
 	t := &Template{
 		templates: template.Must(template.ParseGlob("./views/*.html")),
@@ -39,10 +42,7 @@ func main() {
 	e := echo.New()
 	// register templates
 	e.Renderer = t
-
-	cntrl := controllers.Controller{
-		DB: db,
-	}
+	// e.AutoTLSManager.Cache = autocert.DirCache("/var/www/.cache")
 
 	// Middleware
 	// remove trailing slash. /hello/ -> /hello
@@ -68,5 +68,6 @@ func main() {
 
 	e.GET("/restricted", controllers.Restricted, middleware.JWT([]byte("secret")))
 
+	// e.Logger.Fatal(e.StartAutoTLS("localhost.com:443"))
 	e.Logger.Fatal(e.Start(":1323"))
 }

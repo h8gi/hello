@@ -1,3 +1,4 @@
+{{define "login"}}
 <!doctype html>
 <html lang="en">
   <head>
@@ -5,6 +6,11 @@
     <title>Document</title>
   </head>
   <body>
-	
+	<form action="/login" method="post">
+      name: <input name="name" type="text" value=""/> <br/>
+      password: <input name="password" type="password" value=""/> <br/>
+      <button>login</button>
+    </form>
   </body>
 </html>
+{{end}}
