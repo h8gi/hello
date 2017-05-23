@@ -40,7 +40,7 @@ func main() {
 	// register templates
 	e.Renderer = t
 
-	usersController := controllers.UsersController{
+	cntrl := controllers.Controller{
 		DB: db,
 	}
 
@@ -56,14 +56,15 @@ func main() {
 		return c.String(http.StatusOK, "Hello, World!")
 	})
 
-	e.POST("/auth", usersController.Authenticate)
+	e.GET("/login", cntrl.ShowLogin)
+	e.POST("/login", cntrl.Login)
 
-	e.GET("/users", usersController.List)
-	e.POST("/users", usersController.Create)
+	e.GET("/users", cntrl.List)
+	e.POST("/users", cntrl.CreateUser)
 
-	e.GET("/users/:name", usersController.Get)
-	e.PUT("/users/:name", usersController.Update)
-	e.DELETE("/users/:name", usersController.Delete)
+	e.GET("/users/:name", cntrl.GetUser)
+	e.PUT("/users/:name", cntrl.UpdateUser)
+	e.DELETE("/users/:name", cntrl.DeleteUser)
 
 	e.GET("/restricted", controllers.Restricted, middleware.JWT([]byte("secret")))
 
