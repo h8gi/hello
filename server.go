@@ -24,7 +24,7 @@ func (t *Template) Render(w io.Writer, name string, data interface{}, c echo.Con
 }
 
 func main() {
-	db, err := gorm.Open("postgres", "host=localhost user=yagi dbname=gomi sslmode=disable password=mypassword")
+	db, err := gorm.Open("postgres", "host=localhost user=yagihiroki dbname=gomi sslmode=disable password=mypassword")
 	if err != nil {
 		panic("failed to connect database")
 	}
@@ -56,7 +56,7 @@ func main() {
 		return c.String(http.StatusOK, "Hello, World!")
 	})
 
-	e.POST("/login", usersController.Login)
+	e.POST("/auth", usersController.Authenticate)
 
 	e.GET("/users", usersController.List)
 	e.POST("/users", usersController.Create)

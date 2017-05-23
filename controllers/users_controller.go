@@ -74,7 +74,7 @@ func (uc *UsersController) Delete(c echo.Context) (err error) {
 	return c.String(http.StatusOK, fmt.Sprintf("delete: %s", name))
 }
 
-func (uc *UsersController) Login(c echo.Context) error {
+func (uc *UsersController) Authenticate(c echo.Context) error {
 	name := c.FormValue("name")
 	password := c.FormValue("password")
 	user := new(models.User)
